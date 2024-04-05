@@ -1,0 +1,30 @@
+name: blog-deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+  deploy:
+    runs-on: ubuntu-latest
+    # Add a dependency to the build job
+    needs: build
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: deploy to gh pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
